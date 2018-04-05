@@ -19,7 +19,7 @@ class ProductoSearch extends Producto
     {
         return [
             [['id'], 'integer'],
-            [['nombrep'], 'safe'],
+            [['nombre'], 'safe'],
             [['preciosugerido'], 'number'],
         ];
     }
@@ -64,7 +64,7 @@ class ProductoSearch extends Producto
             'preciosugerido' => $this->preciosugerido,
         ]);
 
-        $query->andFilterWhere(['ilike', 'nombrep', $this->nombrep]);
+        $query->andFilterWhere(['ilike', 'nombre', $this->nombre]);
 
         return $dataProvider;
     }
