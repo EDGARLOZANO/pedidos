@@ -12,6 +12,7 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
+
     <?php echo $form->field($model, 'role')->dropDownList( ['1' => 'admin', '2' => 'user'] ); ?>
 
 

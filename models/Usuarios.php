@@ -56,6 +56,25 @@ class Usuarios extends \yii\db\ActiveRecord
             'role' => 'Role',
         ];
     }
+    public static function isUserAdmin($username)
+    {
+        if (static::findOne(['username' => $username,'role' => 1])){
+            return true;
+        } else {
 
+            return false;
+        }
+
+    }
+
+    public static function isUserSimple($username)
+    {
+        if (static::findOne(['username' => $username,'role' => 2])){
+            return true;
+        } else {
+
+            return false;
+        }
+    }
 
 }

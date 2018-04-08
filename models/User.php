@@ -14,6 +14,7 @@ use Yii;
  * @property string $userid
  * @property string $username
  * @property string $password
+ * @property string $role
  */
 class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
@@ -168,5 +169,27 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         $this->password_reset_token = null;
     }
     /** EXTENSION MOVIE **/
+
+    public static function isUserAdmin($username)
+    {
+        if (static::findOne(['username' => $username,'role' => 1])){
+            return true;
+        } else {
+
+            return false;
+        }
+
+    }
+
+    public static function isUserSimple($username)
+    {
+        if (static::findOne(['username' => $username,'role' => 2])){
+            return true;
+        } else {
+
+            return false;
+        }
+    }
+
 
 }
