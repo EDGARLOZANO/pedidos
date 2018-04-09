@@ -8,6 +8,9 @@ use app\models\ClienteSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\models\Usuarios;
+use yii\filters\AccessControl;
+
 
 /**
  * ClienteController implements the CRUD actions for Cliente model.
@@ -19,8 +22,59 @@ class ClienteController extends Controller
      */
     public function behaviors()
     {
+
         return [
-            'verbs' => [
+        'access' => [
+        'class' => AccessControl::className(),
+        'only' => [ 'index','view','create','update','delete'],
+        'rules' => [
+            [
+                //El administrador tiene permisos sobre las siguientes acciones
+                'actions' => ['index','view','create','update','delete'
+                ],
+                //Esta propiedad establece que tiene permisos
+                'allow' => true,
+                //Usuarios autenticados, el signo ? es para invitados
+                'roles' => ['@'],
+                //Este método nos permite crear un filtro sobre la identidad del usuario
+                //y así establecer si tiene permisos o no
+                'matchCallback' => function ($rule, $action) {
+                    //Llamada al método que comprueba si es un administrador
+                    return Usuarios::isUserAdmin(Yii::$app->user->identity->username);
+                },
+            ],
+            [
+                'actions' => ['index','view','create','update','delete'
+                ],
+                //Esta propiedad establece que tiene permisos
+                'allow' => false,
+                //Usuarios autenticados, el signo ? es para invitados
+                'roles' => ['@'],
+                //Este método nos permite crear un filtro sobre la identidad del usuario
+                //y así establecer si tiene permisos o no
+                'matchCallback' => function ($rule, $action) {
+                    //Llamada al método que comprueba si es un administrador
+                    return Usuarios::isUserSimple(Yii::$app->user->identity->username);
+                },
+            ],
+            [
+                'actions' => ['index','view','create','update','delete'
+                ],
+                //Esta propiedad establece que tiene permisos
+                'allow' => false,
+                //Usuarios autenticados, el signo ? es para invitados
+                'roles' => ['?'],
+                //Este método nos permite crear un filtro sobre la identidad del usuario
+                //y así establecer si tiene permisos o no
+                'matchCallback' => function ($rule, $action) {
+                    //Llamada al método que comprueba si es un administrador
+
+                },
+            ],
+        ],
+    ],
+
+        'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
@@ -64,11 +118,22 @@ class ClienteController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Cliente();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $transaction = Cliente::getDb()->beginTransaction();
+        try {
+            $model = new Cliente();
+
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                $transaction->commit();
+                return $this->redirect(['index']);
+            }
+
+        } catch(\Exception $e) {
+            $transaction->rollBack();
+            throw $e;
+
         }
+
 
         return $this->render('create', [
             'model' => $model,
@@ -124,4 +189,7 @@ class ClienteController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+
+
 }

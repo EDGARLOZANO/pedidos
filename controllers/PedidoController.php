@@ -10,6 +10,8 @@ use app\models\PedidoSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\models\Usuarios;
+use yii\filters\AccessControl;
 
 
 
@@ -23,15 +25,63 @@ class PedidoController extends Controller
      * {@inheritdoc}
      */
     public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
+    {return ['access' => [
+        'class' => AccessControl::className(),
+        'only' => [ 'index','view','create','update','delete'],
+        'rules' => [
+            [
+                //El administrador tiene permisos sobre las siguientes acciones
+                'actions' => ['index','view','create','update','delete'
                 ],
+                //Esta propiedad establece que tiene permisos
+                'allow' => false,
+                //Usuarios autenticados, el signo ? es para invitados
+                'roles' => ['@'],
+                //Este método nos permite crear un filtro sobre la identidad del usuario
+                //y así establecer si tiene permisos o no
+                'matchCallback' => function ($rule, $action) {
+                    //Llamada al método que comprueba si es un administrador
+                    return Usuarios::isUserAdmin(Yii::$app->user->identity->username);
+                },
             ],
-        ];
+            [
+                'actions' => ['index','view','create','update','delete'
+                ],
+                //Esta propiedad establece que tiene permisos
+                'allow' => true,
+                //Usuarios autenticados, el signo ? es para invitados
+                'roles' => ['@'],
+                //Este método nos permite crear un filtro sobre la identidad del usuario
+                //y así establecer si tiene permisos o no
+                'matchCallback' => function ($rule, $action) {
+                    //Llamada al método que comprueba si es un administrador
+                    return Usuarios::isUserSimple(Yii::$app->user->identity->username);
+                },
+            ],
+            [
+                'actions' => ['index','view','create','update','delete'
+                ],
+                //Esta propiedad establece que tiene permisos
+                'allow' => false,
+                //Usuarios autenticados, el signo ? es para invitados
+                'roles' => ['?'],
+                //Este método nos permite crear un filtro sobre la identidad del usuario
+                //y así establecer si tiene permisos o no
+                'matchCallback' => function ($rule, $action) {
+                    //Llamada al método que comprueba si es un administrador
+
+                },
+            ],
+        ],
+    ],
+
+        'verbs' => [
+            'class' => VerbFilter::className(),
+            'actions' => [
+                'delete' => ['POST'],
+            ],
+        ],
+    ];
     }
 
     /**
@@ -70,12 +120,21 @@ class PedidoController extends Controller
     public function actionCreate()
     {
 
+        $transaction = Pedido::getDb()->beginTransaction();
+        try {
         $model = new Pedido();
 
         $model->fecha=date("d/m/Y");
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $transaction->commit();
             return $this->redirect(['detalle-pedido/create']);
+
+        }
+
+        }catch(\Exception $e) {
+            $transaction->rollBack();
+            throw $e;
 
         }
 
@@ -93,12 +152,19 @@ class PedidoController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $transaction = Pedido::getDb()->beginTransaction();
+        try {
+            $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                $transaction->commit();
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            throw $e;
+
         }
-
         return $this->render('update', [
             'model' => $model,
         ]);
@@ -113,8 +179,16 @@ class PedidoController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $transaction = Pedido::getDb()->beginTransaction();
+        try {
+            $this->findModel($id)->delete();
+            $transaction->commit();
 
+        }catch (\Exception $e) {
+                $transaction->rollBack();
+                throw $e;
+
+            }
         return $this->redirect(['index']);
     }
 
