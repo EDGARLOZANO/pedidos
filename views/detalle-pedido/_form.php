@@ -21,7 +21,7 @@ use \yii\helpers\ArrayHelper;
 
     <?= $form->field($model, 'precio')->textInput() ?>
     <?php
-    $items2 = ArrayHelper::map(Pedido::find()->max(1), 'id','id');
+    $items2 = ArrayHelper::map(Pedido::find()->all(), 'id','id');
     ?>
 
     <?= $form->field($model, 'pedidoid')->
@@ -46,6 +46,10 @@ use \yii\helpers\ArrayHelper;
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
     </div>
+
+    <?= Html::a('Finalizar Pedido', ['/detalle-pedido/index'], ['class'=>'btn btn-primary']) ?>
+
+
 
     <?php ActiveForm::end(); ?>
 

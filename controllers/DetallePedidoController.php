@@ -121,7 +121,7 @@ class DetallePedidoController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             $transaction->commit();
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['create']);
         } }catch(\Exception $e) {
             $transaction->rollBack();
             throw $e;
