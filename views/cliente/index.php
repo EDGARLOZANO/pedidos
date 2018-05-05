@@ -69,7 +69,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'class'=>'update-modal-click grid-action btn-xs btn btn-default',
                             'data-toggle'=>'tooltip',
                             'data-placement'=>'bottom',
-                            'title'=>'Vers'
+                            'title'=>'Ver'
                         ]);
                         return $btn;
 
