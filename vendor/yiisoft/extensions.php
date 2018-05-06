@@ -75,4 +75,13 @@ return array (
       '@kartik/grid' => $vendorDir . '/kartik-v/yii2-grid',
     ),
   ),
+  'kartik-v/yii2-widget-growl' => 
+  array (
+    'name' => 'kartik-v/yii2-widget-growl',
+    'version' => '9999999-dev',
+    'alias' => 
+    array (
+      '@kartik/growl' => $vendorDir . '/kartik-v/yii2-widget-growl',
+    ),
+  ),
 );

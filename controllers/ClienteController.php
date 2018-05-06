@@ -12,6 +12,7 @@ use app\models\Usuarios;
 use yii\filters\AccessControl;
 
 
+
 /**
  * ClienteController implements the CRUD actions for Cliente model.
  */
@@ -124,7 +125,22 @@ class ClienteController extends Controller
             $model = new Cliente();
 
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
+
+                Yii::$app->getSession()->setFlash('success', [
+                    'type' => 'success',
+                    'duration' => 3000,
+                    'icon' => 'glyphicon glyphicon-ok-sign',
+                    'message' => 'Guardado con exito!',
+                    'title' => '    Cliente',
+                    'positonY' => 'top',
+                    'positonX' => 'right'
+                ]);
+
+
                 $transaction->commit();
+
+
+
                 return $this->redirect(['index']);
             }
 
@@ -152,6 +168,18 @@ class ClienteController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+
+            Yii::$app->getSession()->setFlash('warning', [
+                'type' => 'warning',
+                'duration' => 3000,
+                'icon' => 'glyphicon glyphicon-ok-sign',
+                'message' => 'Modificado con exito!',
+                'title' => '   Cliente',
+                'positonY' => 'top',
+                'positonX' => 'right'
+            ]);
+
+
             return $this->redirect(['index']);
         }
 
@@ -169,7 +197,27 @@ class ClienteController extends Controller
      */
     public function actionDelete($id)
     {
+        $transaction = Cliente::getDb()->beginTransaction();
+        try {
         $this->findModel($id)->delete();
+        Yii::$app->getSession()->setFlash('danger', [
+            'type' => 'danger',
+            'duration' => 3000,
+            'icon' => 'glyphicon glyphicon-ok-sign',
+            'message' => 'Fue eliminado!',
+            'title' => '   Cliente',
+            'positonY' => 'top',
+            'positonX' => 'right'
+        ]);
+            $transaction->commit();
+
+        }
+        catch(\Exception $e) {
+            $transaction->rollBack();
+            throw $e;
+
+        }
+
 
         return $this->redirect(['index']);
     }

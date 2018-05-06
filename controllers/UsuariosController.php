@@ -119,7 +119,23 @@ class UsuariosController extends Controller
         $model = new Usuarios();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+
+
+            Yii::$app->getSession()->setFlash('success', [
+                'type' => 'success',
+                'duration' => 3000,
+                'icon' => 'glyphicon glyphicon-ok-sign',
+                'message' => 'Guardado con exito!',
+                'title' => '    Usuario',
+                'positonY' => 'top',
+                'positonX' => 'right'
+            ]);
+
+
+
             return $this->redirect(['view', 'id' => $model->id]);
+
+
         }
 
         return $this->renderAjax('create', [
@@ -139,6 +155,17 @@ class UsuariosController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+
+            Yii::$app->getSession()->setFlash('warning', [
+                'type' => 'warning',
+                'duration' => 3000,
+                'icon' => 'glyphicon glyphicon-ok-sign',
+                'message' => 'Modificado con exito!',
+                'title' => '   Usuario',
+                'positonY' => 'top',
+                'positonX' => 'right'
+            ]);
+
             return $this->redirect(['inedex']);
         }
 
@@ -157,6 +184,16 @@ class UsuariosController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
+
+        Yii::$app->getSession()->setFlash('danger', [
+            'type' => 'danger',
+            'duration' => 3000,
+            'icon' => 'glyphicon glyphicon-ok-sign',
+            'message' => 'Fue eliminado!',
+            'title' => '   Usuario',
+            'positonY' => 'top',
+            'positonX' => 'right'
+        ]);
 
         return $this->redirect(['index']);
     }

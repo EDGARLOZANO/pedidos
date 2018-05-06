@@ -32,6 +32,7 @@ class ComposerStaticInit162394adc0199cb6ded5371491d3b3f6
         ),
         'k' => 
         array (
+            'kartik\\growl\\' => 13,
             'kartik\\grid\\' => 12,
             'kartik\\dialog\\' => 14,
             'kartik\\base\\' => 12,
@@ -116,6 +117,10 @@ class ComposerStaticInit162394adc0199cb6ded5371491d3b3f6
             0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
             1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
             2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+        ),
+        'kartik\\growl\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-growl',
         ),
         'kartik\\grid\\' => 
         array (

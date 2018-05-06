@@ -76,7 +76,9 @@ if (YII_ENV_DEV) {
     $config['modules']['gridview']=[
         'class' => '\kartik\grid\Module'
     ];
-
+    $config['modules']['Growl']=[
+        'class' => '\kartik\widgets\Module'
+    ];
 
 
 }
