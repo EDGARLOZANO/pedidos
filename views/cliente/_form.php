@@ -15,7 +15,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'rfc')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'razonsocial')->textInput(['maxlength' => true]) ?>
+    <?php echo $form->field($model, 'razonsocial')->dropDownList( ['fisica' => 'FISICA', 'moral' => 'MORAL'] ); ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']);

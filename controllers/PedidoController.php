@@ -5,13 +5,16 @@ namespace app\controllers;
 
 use Yii;
 use app\models\Pedido;
-
+use app\models\Model;
+use app\models\Detallepedido;
+use app\models\DetallePedidoSearch;
 use app\models\PedidoSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\models\Usuarios;
 use yii\filters\AccessControl;
+use \yii\helpers\ArrayHelper;
 
 
 
@@ -107,8 +110,13 @@ class PedidoController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
+        $searchModel = new DetallePedidoSearch();
+
+        $dataProvider = $searchModel->search([$searchModel->pedidoid=$id]);
+
+        return $this->renderAjax('/detalle-pedido/index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -120,28 +128,112 @@ class PedidoController extends Controller
     public function actionCreate()
     {
 
-        $transaction = Pedido::getDb()->beginTransaction();
-        try {
+
         $model = new Pedido();
+        $detalle = [new Detallepedido];
 
         $model->fecha=date("d/m/Y");
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            $transaction->commit();
-            return $this->redirect(['detalle-pedido/create']);
+        if ($model->load(Yii::$app->request->post())  ) {
+            $model->save();
+
+            //$detalle->save();
+
+
+            $detalle= Model::createMultiple(Detallepedido::classname());
+            Model::loadMultiple($detalle, Yii::$app->request->post());
+            foreach ($detalle as $detalle) {
+                $detalle->pedidoid = $model->id;
+                $detalle->save();
+            }
+
+            // validate all models
+            /*  $valid = $model->validate();
+              $valid = Model::validateMultiple($detalle)&& $valid;
+
+              if ($valid) {
+                  $transaction = \Yii::$app->db->beginTransaction();
+                  try {
+                      if ($flag = $detalle->save(false)) {
+                          $model->save();
+                          foreach ($detalle as $detalle) {
+                              $detalle->pedidoid = $model->id;
+                              if (! ($flag = $detalle->save(false))) {
+
+                                  Yii::$app->getSession()->setFlash('danger', [
+                                      'type' => 'danger',
+                                      'duration' => 3000,
+                                      'icon' => 'glyphicon glyphicon-ok-sign',
+                                      'message' => 'Fue eliminado!',
+                                      'title' => '   Cliente',
+                                      'positonY' => 'top',
+                                      'positonX' => 'right'
+                                  ]);
+
+                                  $transaction->rollBack();
+                                  break;
+                              }
+                          }
+                      }
+                      if ($flag) {
+
+                          $transaction->commit();
+                          Yii::$app->getSession()->setFlash('success', [
+                              'type' => 'success',
+                              'duration' => 3000,
+                              'icon' => 'glyphicon glyphicon-ok-sign',
+                              'message' => 'Guardado con exito!',
+                              'title' => '    Pedido',
+                              'positonY' => 'top',
+                              'positonX' => 'right'
+                          ]);
+
+                          return $this->redirect(['index']);
+
+
+
+                      }
+                  } catch (Exception $e) {
+
+                      Yii::$app->getSession()->setFlash('danger', [
+                          'type' => 'warning',
+                          'duration' => 3000,
+                          'icon' => 'glyphicon glyphicon-ok-sign',
+                          'message' => 'Fue eliminado!',
+                          'title' => '   Cliente',
+                          'positonY' => 'top',
+                          'positonX' => 'right'
+                      ]);
+
+
+                      $transaction->rollBack();
+                  }
+              }
+
+               */
+
+            Yii::$app->getSession()->setFlash('success', [
+                'type' => 'success',
+                'duration' => 3000,
+                'icon' => 'glyphicon glyphicon-ok-sign',
+                'message' => 'Guardado con exito!',
+                'title' => '    Pedido',
+                'positonY' => 'top',
+                'positonX' => 'right'
+            ]);
+            return $this->redirect(['index']);
 
         }
 
-        }catch(\Exception $e) {
-            $transaction->rollBack();
-            throw $e;
-
-        }
-
-        return $this->render('create', [
+        return $this->renderAjax('create', [
             'model' => $model,
+            'detalle' =>(empty($detalle)) ? [new Detallepedido()] : $detalle
         ]);
     }
+
+
+
+
 
     /**
      * Updates an existing Pedido model.
@@ -152,21 +244,41 @@ class PedidoController extends Controller
      */
     public function actionUpdate($id)
     {
-        $transaction = Pedido::getDb()->beginTransaction();
-        try {
+
             $model = $this->findModel($id);
+            $detalle = $model->detallepedidos;
 
-            if ($model->load(Yii::$app->request->post()) && $model->save()) {
-                $transaction->commit();
-                return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load(Yii::$app->request->post())) {
+
+                $oldIDs = ArrayHelper::map($detalle, 'id', 'id');
+                $detalle= Model::createMultiple(Detallepedido::classname(), $detalle);
+                Model::loadMultiple($detalle, Yii::$app->request->post());
+                $deletedIDs = array_diff($oldIDs, array_filter(ArrayHelper::map($detalle, 'id', 'id')));
+
+                 $model->save();
+                if (! empty($deletedIDs)) {
+                    Detallepedido::deleteAll(['id' => $deletedIDs]);
+                }
+                foreach ($detalle as $detalle) {
+                    $detalle->pedidoid= $model->id;
+                     $detalle->save();
+                    }
+                Yii::$app->getSession()->setFlash('success', [
+                    'type' => 'info',
+                    'duration' => 3000,
+                    'icon' => 'glyphicon glyphicon-sort',
+                    'message' => 'Actualizado con exito!',
+                    'title' => '    Pedido',
+                    'positonY' => 'top',
+                    'positonX' => 'right'
+                ]);
+                return $this->redirect(['index']);
+
             }
-        } catch (\Exception $e) {
-            $transaction->rollBack();
-            throw $e;
 
-        }
-        return $this->render('update', [
+        return $this->renderAjax('update', [
             'model' => $model,
+            'detalle' =>(empty($detalle)) ? [new Detallepedido] : $detalle
         ]);
     }
 
@@ -179,16 +291,27 @@ class PedidoController extends Controller
      */
     public function actionDelete($id)
     {
-        $transaction = Pedido::getDb()->beginTransaction();
-        try {
-            $this->findModel($id)->delete();
-            $transaction->commit();
+        $model = $this->findModel($id);
+        $detalle = $model->detallepedidos;
 
-        }catch (\Exception $e) {
-                $transaction->rollBack();
-                throw $e;
+        $oldIDs = ArrayHelper::map($detalle, 'id', 'id');
+        $detalle= Model::createMultiple(Detallepedido::classname(), $detalle);
+        Model::loadMultiple($detalle, Yii::$app->request->post());
+        $deletedIDs = array_diff($oldIDs, array_filter(ArrayHelper::map($detalle, 'id', 'id')));
 
-            }
+        Detallepedido::deleteAll(['id' => $deletedIDs]);
+
+        $this->findModel($id)->delete();
+        Yii::$app->getSession()->setFlash('success', [
+            'type' => 'danger',
+            'duration' => 3000,
+            'icon' => 'glyphicon glyphicon-remove',
+            'message' => 'Fue eliminado!',
+            'title' => '    Pedido',
+            'positonY' => 'top',
+            'positonX' => 'right'
+        ]);
+
         return $this->redirect(['index']);
     }
 

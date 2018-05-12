@@ -80,6 +80,9 @@ if (YII_ENV_DEV) {
         'class' => '\kartik\widgets\Module'
     ];
 
+    $config['modules']['DynamicFormWidget']=[
+        'class' => 'wbraganca\dynamicform\Module'
+    ];
 
 }
 

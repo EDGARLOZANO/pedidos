@@ -52,21 +52,20 @@ AppAsset::register($this);
         $menuItems[]=['label' => '<span class="glyphicon glyphicon-user"></span> Usuarios',
             'items' => [
                      ['label' => '<span class="glyphicon glyphicon-eye-open"></span> Ver usuarios', 'url' => ['/usuarios/index']],
-                     ['label' => '<span class="glyphicon glyphicon-plus"></span> Crear usuario', 'url' => ['/usuarios/create']] ,
+
                  ]
             ];
         $menuItems[]=['label' => '<span class="glyphicon glyphicon-briefcase"></span> Clientes',
             'items' => [
                 ['label' => '<span class="glyphicon glyphicon-eye-open"></span> Ver Clientes',
                     'url' => ['/cliente/index']],
-                ['label' => '<span class="glyphicon glyphicon-plus"></span> Crear Cliente', 'url' => ['/cliente/create']] ,
+
 
             ]];
 
         $menuItems[]=['label' => '<span class="glyphicon glyphicon-barcode"></span> Productos',
             'items' => [
                 ['label' => '<span class="glyphicon glyphicon-eye-open"></span> Ver Productos', 'url' => ['/producto/index']],
-                ['label' => '<span class="glyphicon glyphicon-plus"></span> Crear Producto', 'url' => ['/producto/create']] ,
 
             ]
 
@@ -75,13 +74,9 @@ AppAsset::register($this);
         else{
             $menuItems[]=['label' => '<span class="glyphicon glyphicon-shopping-cart"></span>Pedidos',
                 'items' => [
-                     ['label' => '<span class="glyphicon glyphicon-plus"></span> Crear pedido', 'url' => ['/pedido/create']],
-                     ['label' => '<span class="glyphicon glyphicon-eye-open"></span> Ver pedido', 'url' => ['/pedido/index']] ,
+                     ['label' => '<span class="glyphicon glyphicon-eye-open"></span> Pedido', 'url' => ['/pedido/index']] ,
                  ]];
-            $menuItems[]=['label' => '<span class="glyphicon glyphicon-hand-down"></span> Detalle Pedidos',
-                'items' => [
-                    ['label' => '<span class="glyphicon glyphicon-eye-open"></span> Ver Detalle Pedido', 'url' => ['/detalle-pedido/index']],
-                ]];
+
         }
 
         $menuItems[] = [

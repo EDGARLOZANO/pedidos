@@ -21,7 +21,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'precio') ?>
 
-    <?= $form->field($model, 'pedidoid') ?>
+    <?= $form->field($model, 'pedidoid')->textInput(['disabled' => true]) ?>
 
     <?= $form->field($model, 'productoid') ?>
 

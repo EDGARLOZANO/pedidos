@@ -6,7 +6,7 @@ use app\models\Producto;
 use app\models\Pedido;
 use app\models\Cliente;
 use \yii\helpers\ArrayHelper;
-
+use wbraganca\dynamicform\DynamicFormWidget;
 /* @var $this yii\web\View */
 /* @var $model app\models\Detallepedido */
 /* @var $model2 app\models\Pedido */
@@ -33,6 +33,13 @@ use \yii\helpers\ArrayHelper;
 
     <?= $form->field($model, 'productoid')->
     dropDownList($items,['Escoge'=>"Seleciona producto"]) ?>
+
+
+
+
+
+    </div>
+
 
     <?php
     $items2 = ArrayHelper::map(Cliente::find()->all(), 'id','rfc');
