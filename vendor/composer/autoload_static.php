@@ -26,6 +26,10 @@ class ComposerStaticInit162394adc0199cb6ded5371491d3b3f6
             'yii\\bootstrap\\' => 14,
             'yii\\' => 4,
         ),
+        'w' => 
+        array (
+            'wbraganca\\dynamicform\\' => 22,
+        ),
         'p' => 
         array (
             'phpDocumentor\\Reflection\\' => 25,
@@ -111,6 +115,10 @@ class ComposerStaticInit162394adc0199cb6ded5371491d3b3f6
         'yii\\' => 
         array (
             0 => __DIR__ . '/..' . '/yiisoft/yii2',
+        ),
+        'wbraganca\\dynamicform\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/wbraganca/yii2-dynamicform/src',
         ),
         'phpDocumentor\\Reflection\\' => 
         array (
