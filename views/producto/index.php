@@ -55,6 +55,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'nombre',
             'preciosugerido',
+            'stock',
             ['class' => 'yii\grid\ActionColumn',
                 'contentOptions' => ['style' => 'width: 8.7%'],
                 'visible'=> Yii::$app->user->isGuest ? false : true,

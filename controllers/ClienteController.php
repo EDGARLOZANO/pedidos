@@ -122,7 +122,9 @@ class ClienteController extends Controller
 
         $transaction = Cliente::getDb()->beginTransaction();
         try {
+
             $model = new Cliente();
+
 
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
 

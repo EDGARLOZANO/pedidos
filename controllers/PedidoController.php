@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 
+use app\models\Producto;
 use Yii;
 use app\models\Pedido;
 use app\models\Model;
@@ -132,85 +133,24 @@ class PedidoController extends Controller
         $model = new Pedido();
         $detalle = [new Detallepedido];
 
-        $model->fecha=date("d/m/Y");
+        $model->fecha = date("d/m/Y");
+
 
         if ($model->load(Yii::$app->request->post())  ) {
-            $model->save();
 
-            //$detalle->save();
+
+
+            $model->save();
 
 
             $detalle= Model::createMultiple(Detallepedido::classname());
             Model::loadMultiple($detalle, Yii::$app->request->post());
             foreach ($detalle as $detalle) {
                 $detalle->pedidoid = $model->id;
+                
                 $detalle->save();
             }
 
-            // validate all models
-            /*  $valid = $model->validate();
-              $valid = Model::validateMultiple($detalle)&& $valid;
-
-              if ($valid) {
-                  $transaction = \Yii::$app->db->beginTransaction();
-                  try {
-                      if ($flag = $detalle->save(false)) {
-                          $model->save();
-                          foreach ($detalle as $detalle) {
-                              $detalle->pedidoid = $model->id;
-                              if (! ($flag = $detalle->save(false))) {
-
-                                  Yii::$app->getSession()->setFlash('danger', [
-                                      'type' => 'danger',
-                                      'duration' => 3000,
-                                      'icon' => 'glyphicon glyphicon-ok-sign',
-                                      'message' => 'Fue eliminado!',
-                                      'title' => '   Cliente',
-                                      'positonY' => 'top',
-                                      'positonX' => 'right'
-                                  ]);
-
-                                  $transaction->rollBack();
-                                  break;
-                              }
-                          }
-                      }
-                      if ($flag) {
-
-                          $transaction->commit();
-                          Yii::$app->getSession()->setFlash('success', [
-                              'type' => 'success',
-                              'duration' => 3000,
-                              'icon' => 'glyphicon glyphicon-ok-sign',
-                              'message' => 'Guardado con exito!',
-                              'title' => '    Pedido',
-                              'positonY' => 'top',
-                              'positonX' => 'right'
-                          ]);
-
-                          return $this->redirect(['index']);
-
-
-
-                      }
-                  } catch (Exception $e) {
-
-                      Yii::$app->getSession()->setFlash('danger', [
-                          'type' => 'warning',
-                          'duration' => 3000,
-                          'icon' => 'glyphicon glyphicon-ok-sign',
-                          'message' => 'Fue eliminado!',
-                          'title' => '   Cliente',
-                          'positonY' => 'top',
-                          'positonX' => 'right'
-                      ]);
-
-
-                      $transaction->rollBack();
-                  }
-              }
-
-               */
 
             Yii::$app->getSession()->setFlash('success', [
                 'type' => 'success',
