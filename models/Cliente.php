@@ -32,6 +32,8 @@ class Cliente extends \yii\db\ActiveRecord
             [['rfc'], 'required'],
             [['rfc', 'razonsocial'], 'string', 'max' => 255],
             [['rfc'], 'unique'],
+            ['rfc', 'match', 'pattern' => "^([A-ZÑ\x26]{3,4}([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1]))([A-Z\d]{3})?$", 'message' => 'formato Invalido'],
+
         ];
     }
 
@@ -53,5 +55,15 @@ class Cliente extends \yii\db\ActiveRecord
     public function getPedidos()
     {
         return $this->hasMany(Pedido::className(), ['clienteid' => 'id']);
+    }
+    public static function clientExist($rfc)
+    {
+        if (static::findOne(['rfc' => $rfc])){
+            return false;
+        } else {
+
+            return true;
+        }
+
     }
 }

@@ -10,7 +10,7 @@ use Yii;
  * @property int $id
  * @property string $nombre
  * @property string $preciosugerido
- *
+ * @property int $stock
  * @property Detallepedido[] $detallepedidos
  */
 class Producto extends \yii\db\ActiveRecord
@@ -29,8 +29,8 @@ class Producto extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nombre', 'preciosugerido'], 'required'],
-            [['preciosugerido'], 'number'],
+            [['nombre', 'preciosugerido','stock'], 'required'],
+            [['preciosugerido','stock'], 'number'],
             [['nombre'], 'string', 'max' => 255],
         ];
     }
@@ -44,6 +44,7 @@ class Producto extends \yii\db\ActiveRecord
             'id' => 'ID',
             'nombre' => 'Nombre',
             'preciosugerido' => 'Preciosugerido',
+            'stock' => 'Stock'
         ];
     }
 
@@ -54,4 +55,19 @@ class Producto extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Detallepedido::className(), ['productoid' => 'id']);
     }
+
+    public static function stock($id,$cant)
+    {
+        $sql = 'SELECT stock FROM Producto WHERE id='.$id;
+
+        if (Producto::findBySql($sql)->all()<$cant){
+
+            console.log('hola');
+            return true;
+        } else {
+
+            return false;
+        }
+    }
+
 }
